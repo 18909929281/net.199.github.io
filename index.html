@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Redirecting...</title>
+    <title>Redirect to Bilibili</title>
     <!-- Auto redirect after 2 seconds -->
     <meta http-equiv="refresh" content="2; url=https://space.bilibili.com/346893783140938">
     <style>
@@ -26,6 +26,16 @@
             width: 100%;
             box-shadow: 0 20px 60px rgba(0,0,0,0.06);
             border: 1px solid #e9edf4;
+        }
+        .badge {
+            display: inline-block;
+            background: #eef2f6;
+            padding: 4px 14px;
+            border-radius: 40px;
+            font-size: 13px;
+            color: #4a6cf7;
+            font-weight: 600;
+            margin-bottom: 12px;
         }
         h1 {
             font-size: 32px;
@@ -77,10 +87,16 @@
             margin-bottom: 16px;
             font-size: 15px;
         }
+        .ver {
+            margin-top: 24px;
+            font-size: 12px;
+            color: #c0cbd8;
+        }
     </style>
 </head>
 <body>
     <div class="card">
+        <div class="badge">v2.0</div>
         <h1>🚀 Go to Bilibili</h1>
         <p class="sub">Redirecting to my Bilibili Space</p >
 
@@ -93,9 +109,11 @@
         <a href=" " class="btn">Click to Jump</a >
 
         <p class="footnote">If not redirected automatically, click the button above.</p >
+        <div class="ver">Page loaded successfully - net199.github.io</div>
     </div>
 
     <script>
+        console.log('✅ v2.0 loaded successfully on net199.github.io');
         let seconds = 2;
         const timerEl = document.getElementById('countdown');
         const interval = setInterval(() => {
