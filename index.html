@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的输入框页面</title>
+    <style>
+        /* 全局样式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(145deg, #f5f7fa 0%, #e9edf5 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        /* 卡片容器 */
+        .card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 28px;
+            padding: 48px 40px 40px;
+            max-width: 520px;
+            width: 100%;
+            box-shadow:
+                0 20px 60px rgba(0, 0, 0, 0.08),
+                0 8px 24px rgba(0, 0, 0, 0.04),
+                inset 0 1px 0 rgba(255, 255, 255, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: transform 0.2s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+        }
+
+        /* 标题 */
+        .title {
+            font-size: 26px;
+            font-weight: 600;
+            color: #1a1f2e;
+            letter-spacing: -0.3px;
+            margin-bottom: 6px;
+        }
+
+        .subtitle {
+            font-size: 15px;
+            color: #6b7280;
+            margin-bottom: 28px;
+            font-weight: 400;
+        }
+
+        /* 输入框组 */
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            font-size: 14px;
+            font-weight: 500;
+            color: #374151;
+            letter-spacing: 0.2px;
+            margin-left: 4px;
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+            background: #ffffff;
+            border-radius: 16px;
+            border: 1.5px solid #e5e9f0;
+            transition: border-color 0.25s ease, box-shadow 0.25s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+        }
+
+        .input-wrapper:focus-within {
+            border-color: #4f6ef7;
+            box-shadow: 0 0 0 4px rgba(79, 110, 247, 0.12);
+        }
+
+        .input-wrapper input {
+            width: 100%;
+            padding: 16px 20px;
+            border: none;
+            background: transparent;
+            font-size: 16px;
+            color: #1a1f2e;
+            outline: none;
+            border-radius: 16px;
+            font-weight: 450;
+        }
+
+        .input-wrapper input::placeholder {
+            color: #aab1c0;
+            font-weight: 400;
+        }
+
+        /* 清除按钮（输入时显示） */
+        .clear-btn {
+            display: none;
+            position: absolute;
+            right: 14px;
+            background: none;
+            border: none;
+            font-size: 18px;
+            color: #9aa3b5;
+            cursor: pointer;
+            padding: 4px 6px;
+            border-radius: 50%;
+            transition: background 0.15s, color 0.15s;
+            line-height: 1;
+        }
+
+        .clear-btn:hover {
+            color: #4f6ef7;
+            background: rgba(79, 110, 247, 0.08);
+        }
+
+        .input-wrapper.has-value .clear-btn {
+            display: block;
+        }
+
+        /* 按钮行 */
+        .action-row {
+            display: flex;
+            gap: 12px;
+            margin-top: 4px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            flex: 1;
+            min-width: 100px;
+            padding: 14px 24px;
+            border: none;
+            border-radius: 14px;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            gap: 6px;
+            letter-spacing: 0.2px;
+        }
+
+        .btn-primary {
+            background: #4f6ef7;
+            color: white;
+            box-shadow: 0 4px 14px rgba(79, 110, 247, 0.30);
+        }
+
+        .btn-primary:hover {
+            background: #3f5de0;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(79, 110, 247, 0.35);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 8px rgba(79, 110, 247, 0.25);
+        }
+
+        .btn-secondary {
+            background: #f1f4f9;
+            color: #374151;
+        }
+
+        .btn-secondary:hover {
+            background: #e6eaf2;
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary:active {
+            transform: translateY(0);
+        }
+
+        /* 输出区域 */
+        .output-area {
+            margin-top: 24px;
+            padding: 16px 20px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 14px;
+            border: 1px solid rgba(229, 233, 240, 0.6);
+            min-height: 54px;
+            display: flex;
+            align-items: center;
+            color: #1a1f2e;
+            font-size: 15px;
+            transition: all 0.2s ease;
+            word-break: break-all;
+        }
+
+        .output-area .placeholder {
+            color: #aab1c0;
+            font-weight: 400;
+        }
+
+        .output-area .value {
+            font-weight: 500;
+            color: #1a1f2e;
+        }
+
+        /* 字符计数 */
+        .char-count {
+            text-align: right;
+            font-size: 12px;
+            color: #9aa3b5;
+            margin-top: 4px;
+            padding-right: 4px;
+            letter-spacing: 0.2px;
+        }
+
+        .char-count span {
+            font-weight: 500;
+            color: #6b7280;
+        }
+
+        /* 响应式 */
+        @media (max-width: 480px) {
+            .card {
+                padding: 32px 20px 28px;
+                border-radius: 20px;
+            }
+
+            .title {
+                font-size: 22px;
+            }
+
+            .input-wrapper input {
+                padding: 14px 16px;
+                font-size: 15px;
+            }
+
+            .btn {
+                padding: 12px 16px;
+                font-size: 14px;
+                min-width: 80px;
+            }
+
+            .action-row {
+                gap: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <!-- 标题 -->
+        <h1 class="title">✏️ 输入框</h1>
+        <p class="subtitle">在下方输入内容，点击按钮查看反馈</p >
+
+        <!-- 输入框 -->
+        <div class="input-group">
+            <label for="mainInput">请输入内容</label>
+            <div class="input-wrapper" id="inputWrapper">
+                <input
+                type="text"
+                id="mainInput"
+                placeholder="例如：Hello World"
+                autocomplete="off"
+                spellcheck="false"
+                />
+                <button class="clear-btn" id="clearBtn" aria-label="清除内容">✕</button>
+            </div>
+            <div class="char-count">
+                已输入 <span id="charCount">0</span> 个字符
+            </div>
+        </div>
+
+        <!-- 按钮 -->
+        <div class="action-row">
+            <button class="btn btn-primary" id="submitBtn">📤 提交</button>
+            <button class="btn btn-secondary" id="resetBtn">↺ 重置</button>
+        </div>
+
+        <!-- 输出显示 -->
+        <div class="output-area" id="outputArea">
+            <span class="placeholder">等待输入…</span>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            // DOM 元素
+            const input = document.getElementById('mainInput');
+            const wrapper = document.getElementById('inputWrapper');
+            const clearBtn = document.getElementById('clearBtn');
+            const submitBtn = document.getElementById('submitBtn');
+            const resetBtn = document.getElementById('resetBtn');
+            const outputArea = document.getElementById('outputArea');
+            const charCount = document.getElementById('charCount');
+
+            // ---------- 辅助函数 ----------
+            function updateUI() {
+                const value = input.value;
+                const len = value.length;
+
+                // 更新字符计数
+                charCount.textContent = len;
+
+                // 控制清除按钮显示
+                wrapper.classList.toggle('has-value', len > 0);
+
+                // 更新输出区域（仅当没有聚焦时自动更新？我们使用 submit 更新，这里只做清空占位处理）
+                // 但为了体验：如果输入框为空，且输出区域显示的是之前的内容，我们保持不动
+                // 不过重置时我们会重置输出
+            }
+
+            // 更新输出区域显示内容
+            function setOutput(text) {
+                if (text && text.trim() !== '') {
+                    outputArea.innerHTML = `<span class="value">${escapeHtml(text)}</span>`;
+                } else {
+                    outputArea.innerHTML = `<span class="placeholder">等待输入…</span>`;
+                }
+            }
+
+            // 简单防 XSS
+            function escapeHtml(str) {
+                const div = document.createElement('div');
+                div.textContent = str;
+                return div.innerHTML;
+            }
+
+            // 重置所有
+            function resetAll() {
+                input.value = '';
+                updateUI();
+                setOutput('');
+                input.focus();
+            }
+
+            // 提交：显示当前输入内容
+            function handleSubmit() {
+                const val = input.value;
+                if (val.trim() === '') {
+                    setOutput('⚠️ 输入内容为空，请先输入一些文字。');
+                    return;
+                }
+                setOutput(`✅ 你输入了：${val}`);
+                // 可以增加一个微小的动画反馈（简单闪烁）
+                outputArea.style.transition = 'background 0.15s';
+                outputArea.style.background = 'rgba(79, 110, 247, 0.06)';
+                setTimeout(() => {
+                    outputArea.style.background = 'rgba(255, 255, 255, 0.5)';
+                }, 200);
+            }
+
+            // ---------- 事件绑定 ----------
+
+            // 1. 输入事件：更新字符数 & 清除按钮
+            input.addEventListener('input', updateUI);
+
+            // 2. 清除按钮
+            clearBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                input.value = '';
+                updateUI();
+                input.focus();
+                // 不清除输出内容，但用户可能期望清除后输出也清掉？更符合直觉：清除输入时如果输出显示的是之前的内容，保留；但我们可以提供一个更干净的体验：如果输入为空，输出显示占位
+                // 但为了不丢失之前提交的内容，我们选择保留输出。但大多数用户希望清除后输出也重置？这里我们选择保留，让用户通过重置按钮清空全部。
+                // 但为了体验更好，如果输出显示的是 "你输入了：xxx" 而输入被清空，我们让输出变为占位？其实更合理：输入框清空，输出仍然显示最后一次提交的内容。
+                // 我们保持现状，输出不变。
+                // 但可以加一个小细节：如果输出显示的是 "你输入了：xxx" 而输入被清空，我们让输出变为 "等待输入…" ？ 但这样会丢失信息。我们不做自动清除。
+                // 用户可以用重置按钮。
+            });
+
+            // 3. 提交按钮
+            submitBtn.addEventListener('click', handleSubmit);
+
+            // 4. 重置按钮
+            resetBtn.addEventListener('click', resetAll);
+
+            // 5. 键盘支持：回车提交
+            input.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    handleSubmit();
+                }
+            });
+
+            // 6. 点击输入框外部时，如果输入框有内容且输出为占位，我们可以不做特殊处理
+            // 额外：点击输入框时如果有内容，自动选中文字（可选）
+            input.addEventListener('focus', function() {
+                // 不自动选中，防止误触
+            });
+
+            // 7. 初始化 UI
+            updateUI();
+            // 默认显示占位
+            setOutput('');
+
+            // 小彩蛋：如果用户双击标题，清空所有
+            document.querySelector('.title').addEventListener('dblclick', function() {
+                resetAll();
+                // 加个提示
+                setOutput('✨ 已重置');
+                setTimeout(() => {
+                    if (input.value === '') {
+                        setOutput('');
+                    }
+                }, 1200);
+            });
+
+            console.log('✨ 输入框已加载 — 双击标题可重置');
+        })();
+    </script>
+
+</body>
+</html>
